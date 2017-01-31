@@ -10,7 +10,6 @@
 #include "ble_advertising.h"
 #include "ble_conn_params.h"
 #include "softdevice_handler.h"
-#include "util.h"
 #include "app_timer.h"
 #include "app_uart.h"
 #include "app_util_platform.h"
@@ -22,6 +21,7 @@
 #include "ble_nus.h"
 #include "nrf_delay.h"
 #include "nrf_drv_spi.h"
+#include "util.h"
 
 void spi_init(void);
 

@@ -26,13 +26,36 @@ static const uint8_t m_length = sizeof(m_tx_buf);        /**< Transfer length. *
 // Private Functions
 //**********************************************************************************************************************//
 
-void spi_event_handler(nrf_drv_spi_evt_t const * p_event)
+static void spi_event_handler(nrf_drv_spi_evt_t const * p_event)
 {
     spi_xfer_done = true;
     NRF_LOG_INFO("Transfer completed.\r\n");
     if (m_rx_buf[0] != 0) {
         NRF_LOG_INFO("Received: \r\n");
         NRF_LOG_HEXDUMP_INFO(m_rx_buf, strlen((const char *)m_rx_buf));
+		NRF_LOG_INFO("LSM6DS3 chip ID = 0x%x\r\n", m_rx_buf[1]);
+    }
+}
+
+static void lsm_id_handler(nrf_drv_spi_evt_t const * p_event)
+{
+    spi_xfer_done = true;
+    NRF_LOG_INFO("Transfer completed.\r\n");
+    if (m_rx_buf[0] != 0) {
+        NRF_LOG_INFO("Received: \r\n");
+        NRF_LOG_HEXDUMP_INFO(m_rx_buf, strlen((const char *)m_rx_buf));
+		NRF_LOG_INFO("LSM6DS3 chip ID = 0x%x\r\n", m_rx_buf[1]);
+    }
+}
+
+static void lis_id_handler(nrf_drv_spi_evt_t const * p_event)
+{
+    spi_xfer_done = true;
+    NRF_LOG_INFO("Transfer completed.\r\n");
+    if (m_rx_buf[0] != 0) {
+        NRF_LOG_INFO("Received: \r\n");
+        NRF_LOG_HEXDUMP_INFO(m_rx_buf, strlen((const char *)m_rx_buf));
+		NRF_LOG_INFO("LIS3DSL chip ID = 0x%x\r\n", m_rx_buf[1]);
     }
 }
 
@@ -40,19 +63,36 @@ void spi_event_handler(nrf_drv_spi_evt_t const * p_event)
 // Public Functions
 //**********************************************************************************************************************//
 
+#define LSM_SS_PIN		18
+#define LIS_SS_PIN		10
+#define SPI_MISO_PIN	7
+#define SPI_MOSI_PIN	8
+#define SPI_SCK_PIN		9
+
 void spi_init(void) {
+	uint16_t err_code;
 	spi_xfer_done = false;
 	
 	NRF_LOG_INFO("Started\r\n");
 	
 	nrf_drv_spi_config_t spi_config = NRF_DRV_SPI_DEFAULT_CONFIG;
-	spi_config.ss_pin   = 18;
-    spi_config.miso_pin = 7;
-    spi_config.mosi_pin = 8;
-    spi_config.sck_pin  = 9;
-    APP_ERROR_CHECK(nrf_drv_spi_init(&drv_spi_parameters, &spi_config, spi_event_handler));
+	spi_config.ss_pin   = LSM_SS_PIN;
+    spi_config.miso_pin = SPI_MISO_PIN;
+    spi_config.mosi_pin = SPI_MOSI_PIN;
+    spi_config.sck_pin  = SPI_SCK_PIN;
+    CTR_APP_ERROR_CHECK(nrf_drv_spi_init(&drv_spi_parameters, &spi_config, lsm_id_handler), "nrf_drv_spi_init failed!");
 
-	APP_ERROR_CHECK(nrf_drv_spi_transfer(&drv_spi_parameters, m_tx_buf, m_length, m_rx_buf, m_length));
+	CTR_APP_ERROR_CHECK(nrf_drv_spi_transfer(&drv_spi_parameters, m_tx_buf, m_length, m_rx_buf, m_length), "nrf_drv_spi_transfer failed!");
+
+	while (!spi_xfer_done) {
+		__WFE();
+	}
+	
+	spi_config.ss_pin   = LIS_SS_PIN;
+	nrf_drv_spi_uninit(&drv_spi_parameters);
+	CTR_APP_ERROR_CHECK(nrf_drv_spi_init(&drv_spi_parameters, &spi_config, lis_id_handler), "nrf_drv_spi_init failed!");
+
+	CTR_APP_ERROR_CHECK(nrf_drv_spi_transfer(&drv_spi_parameters, m_tx_buf, m_length, m_rx_buf, m_length), "nrf_drv_spi_transfer failed!");
 
 	while (!spi_xfer_done) {
 		__WFE();
