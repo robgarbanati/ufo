@@ -22,6 +22,7 @@
 #include "nrf_delay.h"
 #include "util.h"
 
-void set_up_motor_pwm(nrf_drv_pwm_t *pwm_module, nrf_pwm_sequence_t const *pwm_sequence);
+void motor_handler(nrf_drv_pwm_evt_type_t event_type);
+void set_up_motor_pwm(nrf_drv_pwm_t *pwm_module, nrf_pwm_sequence_t const *led_sequence, void (*handler)(nrf_drv_pwm_evt_type_t event_type));
 
 #endif // MOTOR_H

@@ -96,6 +96,7 @@ extern nrf_pwm_sequence_t const fun_led_sequence;
 extern nrf_pwm_sequence_t const error_led_sequence;
 extern nrf_pwm_sequence_t const led_handler_pwm_sequence;
 extern nrf_pwm_sequence_t const motor_handler_pwm_sequence;
+extern nrf_pwm_sequence_t const motor_error_sequence;
 
 static nrf_drv_pwm_t pwm0_module = NRF_DRV_PWM_INSTANCE(0);
 static nrf_drv_pwm_t pwm1_module = NRF_DRV_PWM_INSTANCE(1);
@@ -566,7 +567,8 @@ void app_error_fault_handler(uint32_t id, uint32_t pc, uint32_t info) {
     NRF_LOG_FINAL_FLUSH();
 	
 	// Flash the LEDs red.
-	nrf_drv_pwm_simple_playback(&pwm0_module, &error_led_sequence, 1, NRF_DRV_PWM_FLAG_LOOP);
+	set_up_led_pwm(&pwm0_module, &error_led_sequence, NULL);
+	set_up_motor_pwm(&pwm1_module, &motor_error_sequence, NULL);
 	
 	// Spin here forever.
 	for(;;);
@@ -599,7 +601,8 @@ int main(void) {
     APP_ERROR_CHECK(err_code);
 	
 	set_up_led_pwm(&pwm0_module, &led_handler_pwm_sequence, led_handler);
-	set_up_motor_pwm(&pwm1_module, &motor_handler_pwm_sequence);
+	set_up_motor_pwm(&pwm1_module, &motor_handler_pwm_sequence, motor_handler);
+	APP_ERROR_CHECK(1);
 	nrf_delay_ms(1000);
 	
 
