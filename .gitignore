@@ -1,0 +1,6 @@
+*.TMP
+*.tmp
+*uvgui*
+*uvopt*
+_build/*
+*.hex
