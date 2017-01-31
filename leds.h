@@ -29,6 +29,7 @@
 #define LED_BANK_B			28
 #define LED_BANK_C			22
 
-void set_up_led_pwm(nrf_drv_pwm_t *pwm_module, nrf_pwm_sequence_t const *led_sequence);
+void led_handler(nrf_drv_pwm_evt_type_t event_type);
+void set_up_led_pwm(nrf_drv_pwm_t *pwm_module, nrf_pwm_sequence_t const *led_sequence, void (*handler)(nrf_drv_pwm_evt_type_t event_type));
 
 #endif // LED_H

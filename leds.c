@@ -70,8 +70,12 @@ nrf_pwm_sequence_t const    error_led_sequence =
 // Private Functions
 //**********************************************************************************************************************//
 
-static void led_handler(nrf_drv_pwm_evt_type_t event_type)
-{
+
+//**********************************************************************************************************************//
+// Public Functions
+//**********************************************************************************************************************//
+
+void led_handler(nrf_drv_pwm_evt_type_t event_type) {
     if (event_type == NRF_DRV_PWM_EVT_FINISHED) {
         uint8_t channel    = led_handler_pwm_sequence_phase >> 1;
         bool    down       = led_handler_pwm_sequence_phase & 1;
@@ -100,10 +104,7 @@ static void led_handler(nrf_drv_pwm_evt_type_t event_type)
     }
 }
 
-//**********************************************************************************************************************//
-// Public Functions
-//**********************************************************************************************************************//
-void set_up_led_pwm(nrf_drv_pwm_t *pwm_module, nrf_pwm_sequence_t const *led_sequence) {
+void set_up_led_pwm(nrf_drv_pwm_t *pwm_module, nrf_pwm_sequence_t const *led_sequence, void (*handler)(nrf_drv_pwm_evt_type_t event_type)) {
 	NRF_LOG_INFO("Setting up led pwm\r\n");
 	
 	nrf_gpio_cfg_output(LED_BANK_A);
@@ -143,7 +144,7 @@ void set_up_led_pwm(nrf_drv_pwm_t *pwm_module, nrf_pwm_sequence_t const *led_seq
     };
 	
 	nrf_drv_pwm_uninit(pwm_module);
-    err_code = nrf_drv_pwm_init(pwm_module, &config0, led_handler);
+    err_code = nrf_drv_pwm_init(pwm_module, &config0, handler);
 //	err_code = nrf_drv_pwm_init(pwm_module, &config0, NULL);
     APP_ERROR_CHECK(err_code);
 
@@ -154,6 +155,4 @@ void set_up_led_pwm(nrf_drv_pwm_t *pwm_module, nrf_pwm_sequence_t const *led_seq
     led_handler_pwm_sequence_phase                = 0;
 
     nrf_drv_pwm_simple_playback(pwm_module, led_sequence, 1, NRF_DRV_PWM_FLAG_LOOP);
-	
-//	nrf_drv_pwm_simple_playback(pwm_module, &fun_led_sequence, 1, NRF_DRV_PWM_FLAG_LOOP);
 }

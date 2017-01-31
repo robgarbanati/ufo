@@ -147,14 +147,26 @@ static void gap_params_init(void)
     APP_ERROR_CHECK(err_code);
 }
 
+typedef enum current_sequence_enum_t {
+	HANDLER,
+	FUN
+} current_sequence_t;
+
 // Process the data received from the Nordic UART BLE Service and log it.
-static void nus_data_handler(ble_nus_t * p_nus, uint8_t * p_data, uint16_t length)
-{
+static void nus_data_handler(ble_nus_t * p_nus, uint8_t * p_data, uint16_t length) {
+	static current_sequence_t current_sequence = HANDLER;
 	NRF_LOG_INFO("Got some stuff from BLE app:\r\n");
     nrf_log_string((char *)p_data, length);
 	
-	// Flash the LEDs red.
-	nrf_drv_pwm_simple_playback(&pwm0_module, &error_led_sequence, 1, NRF_DRV_PWM_FLAG_LOOP);
+	if(current_sequence == HANDLER) {
+		// Flash the LEDs quickly.
+		set_up_led_pwm(&pwm0_module, &fun_led_sequence, NULL);
+		current_sequence = FUN;
+	} else {
+		// Move through the spectrum slowly.
+		set_up_led_pwm(&pwm0_module, &led_handler_pwm_sequence, led_handler);
+		current_sequence = HANDLER;
+	}
 }
 
 /**@brief Function for initializing services that will be used by the application.
@@ -586,7 +598,7 @@ int main(void) {
     err_code = ble_advertising_start(BLE_ADV_MODE_FAST);
     APP_ERROR_CHECK(err_code);
 	
-	set_up_led_pwm(&pwm0_module, &led_handler_pwm_sequence);
+	set_up_led_pwm(&pwm0_module, &led_handler_pwm_sequence, led_handler);
 	set_up_motor_pwm(&pwm1_module, &motor_handler_pwm_sequence);
 	nrf_delay_ms(1000);
 	
