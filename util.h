@@ -1,3 +1,6 @@
+#ifndef UTIL_H__
+#define UTIL_H__
+
 #include <stdint.h>
 #include <string.h>
 #include "nordic_common.h"
@@ -30,3 +33,5 @@
     } while (0)
 
 void nrf_log_string(char *string, uint16_t length);
+
+#endif // MOTOR_H

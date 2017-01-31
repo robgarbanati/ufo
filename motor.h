@@ -1,5 +1,5 @@
-#ifndef LED_H__
-#define LED_H__
+#ifndef MOTOR_H__
+#define MOTOR_H__
 
 #include <stdint.h>
 #include <string.h>
@@ -10,7 +10,6 @@
 #include "ble_advertising.h"
 #include "ble_conn_params.h"
 #include "softdevice_handler.h"
-#include "util.h"
 #include "app_timer.h"
 #include "app_uart.h"
 #include "app_util_platform.h"
@@ -21,14 +20,8 @@
 #include "nrf_log_ctrl.h"
 #include "ble_nus.h"
 #include "nrf_delay.h"
+#include "util.h"
 
-#define LED_PWM_BLUE_PIN	15
-#define LED_PWM_GREEN_PIN	16
-#define LED_PWM_RED_PIN		17
-#define LED_BANK_A			20
-#define LED_BANK_B			28
-#define LED_BANK_C			22
+void set_up_motor_pwm(nrf_drv_pwm_t *pwm_module, nrf_pwm_sequence_t const *pwm_sequence);
 
-void set_up_led_pwm(nrf_drv_pwm_t *pwm_module, nrf_pwm_sequence_t const *led_sequence);
-
-#endif // LED_H
+#endif // MOTOR_H
