@@ -1,5 +1,8 @@
 #include "leds.h"
 
+#undef NRF_LOG_MODULE_NAME
+#define NRF_LOG_MODULE_NAME "LED"
+
 #define FUN_SEQUENCE_DUTY 			0.1
 #define FUN_SEQUENCE_OFF_TIME 		1 - FUN_SEQUENCE_DUTY
 #define FUN_SEQUENCE_PULSE_WIDTH 	fun_led_sequence_top - FUN_SEQUENCE_OFF_TIME*fun_led_sequence_top

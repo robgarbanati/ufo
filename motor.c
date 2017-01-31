@@ -1,5 +1,8 @@
 #include "motor.h"
 
+#undef NRF_LOG_MODULE_NAME
+#define NRF_LOG_MODULE_NAME "MOTOR"
+
 #define M1_PWM_A	24
 #define M1_PWM_B	23
 #define M2_PWM_A	11

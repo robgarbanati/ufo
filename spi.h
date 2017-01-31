@@ -1,5 +1,5 @@
-#ifndef LED_H__
-#define LED_H__
+#ifndef SPI_H__
+#define SPI_H__
 
 #include <stdint.h>
 #include <string.h>
@@ -21,15 +21,8 @@
 #include "nrf_log_ctrl.h"
 #include "ble_nus.h"
 #include "nrf_delay.h"
+#include "nrf_drv_spi.h"
 
-#define LED_PWM_BLUE_PIN	15
-#define LED_PWM_GREEN_PIN	16
-#define LED_PWM_RED_PIN		17
-#define LED_BANK_A			20
-#define LED_BANK_B			28
-#define LED_BANK_C			22
+void spi_init(void);
 
-void led_handler(nrf_drv_pwm_evt_type_t event_type);
-void set_up_led_pwm(nrf_drv_pwm_t *pwm_module, nrf_pwm_sequence_t const *led_sequence, void (*handler)(nrf_drv_pwm_evt_type_t event_type));
-
-#endif // LED_H__
+#endif // SPI_H__

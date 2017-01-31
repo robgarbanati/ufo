@@ -42,9 +42,13 @@
 #include "nrf_log.h"
 #include "nrf_log_ctrl.h"
 #include "nrf_drv_pwm.h"
+#include "spi.h"
 #include "util.h"
 #include "leds.h"
 #include "motor.h"
+
+#undef NRF_LOG_MODULE_NAME
+#define NRF_LOG_MODULE_NAME "MAIN"
 
 //#include "led_softblink.h"
 
@@ -600,13 +604,11 @@ int main(void) {
     err_code = ble_advertising_start(BLE_ADV_MODE_FAST);
     APP_ERROR_CHECK(err_code);
 	
+	spi_init();
+	
 	set_up_led_pwm(&pwm0_module, &led_handler_pwm_sequence, led_handler);
 	set_up_motor_pwm(&pwm1_module, &motor_handler_pwm_sequence, motor_handler);
-	APP_ERROR_CHECK(1);
-	nrf_delay_ms(1000);
-	
-
-//	app_error_fault_handler(1, 2, 3);
+//	APP_ERROR_CHECK(1);
 
     // Enter main loop.
     for (;;) {
