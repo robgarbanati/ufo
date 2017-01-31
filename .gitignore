@@ -4,3 +4,4 @@
 *uvopt*
 _build/*
 *.hex
+JLinkLog.txt
